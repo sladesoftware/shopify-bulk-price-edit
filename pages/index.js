@@ -1,9 +1,10 @@
-import { Heading, Page } from "@shopify/polaris";
+import { Page } from "@shopify/polaris"
+import ProductList from "../components/ProductList"
 
 const Index = () => (
   <Page>
-    <Heading>Shopify app with Node and React 🎉</Heading>
+    <ProductList />
   </Page>
 );
 
-export default Index;
+export default Index
