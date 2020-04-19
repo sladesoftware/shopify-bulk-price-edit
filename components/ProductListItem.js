@@ -1,9 +1,11 @@
 import { ResourceList, Stack, TextStyle } from "@shopify/polaris"
+import ProductImage from "./ProductImage"
 
 const ProductListItem = ({ product }) => (
   <ResourceList.Item
     id={product.id}
     accessibilityLabel={`View details for ${product.title}`}
+    media={<ProductImage product={product} />}
   >
     <Stack>
       <Stack.Item fill>
