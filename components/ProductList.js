@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useQuery } from "react-apollo"
 import { gql } from "apollo-boost"
 import { ResourceList, Banner, Heading } from "@shopify/polaris"
-import store from "store-js"
 import ProductListItem from "./ProductListItem"
+import EditPricesModal from "./EditPricesModal"
 
 const GET_PRODUCTS = gql`
   query getProducts {
@@ -38,12 +38,8 @@ const GET_PRODUCTS = gql`
 
 const ProductList = () => {
   const { data, loading, error } = useQuery(GET_PRODUCTS)
-  const [selectedItems, setSelectedItems] = useState([])
-
-  useEffect(() => {
-    const existingProducts = store.get("product_group") || []
-    setSelectedItems(existingProducts)
-  }, [])
+  const [selectedProducts, setSelectedProducts] = useState([])
+  const [showEditModal, setShowEditModal] = useState(false)
 
   if (loading) {
     return <p>Loading products...</p>
@@ -72,20 +68,21 @@ const ProductList = () => {
         items={data.products.edges.map(product => product.node)}
         renderItem={product => <ProductListItem product={product} />}
         selectable
-        selectedItems={selectedItems}
-        onSelectionChange={items => setSelectedItems(items.map(item => item.id))}
+        selectedItems={selectedProducts}
+        onSelectionChange={setSelectedProducts}
         promotedBulkActions={[
           {
-            content: "Add to group",
-            disabled: selectedItems.length === 0,
-            onAction: () => {
-              const existingIds = store.get("product_group") || []
-              const productIds = existingIds.concat(selectedItems)
-
-              store.set("product_group", productIds)
-            }
+            content: `Edit ${selectedProducts.length} prices`,
+            disabled: selectedProducts.length === 0,
+            onAction: () => setShowEditModal(true)
           }
         ]}
+      />
+
+      <EditPricesModal
+        open={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        products={selectedProducts}
       />
     </>
   )
