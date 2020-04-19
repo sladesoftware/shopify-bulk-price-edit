@@ -1,9 +1,6 @@
 import { Avatar } from "@shopify/polaris"
 
 const ProductImage = ({ product }) => {
-
-  console.log(product)
-
   const images = product.images.edges || []
   const imageSource = images.length === 0 ? null : images[0].node.originalSrc
 

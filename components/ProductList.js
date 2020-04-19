@@ -2,6 +2,7 @@ import { ResourceList, Banner, Heading } from "@shopify/polaris"
 import { useQuery } from "react-apollo"
 import { gql } from "apollo-boost"
 import ProductListItem from "./ProductListItem"
+import { useState } from "react"
 
 const GET_PRODUCTS = gql`
   query getProducts {
@@ -36,6 +37,7 @@ const GET_PRODUCTS = gql`
 
 const ProductList = () => {
   const { data, loading, error } = useQuery(GET_PRODUCTS)
+  const [selectedItems, setSelectedItems] = useState([])
 
   if (loading) {
     return <p>Loading products...</p>
@@ -63,6 +65,9 @@ const ProductList = () => {
         }}
         items={data.products.edges.map(product => product.node)}
         renderItem={product => <ProductListItem product={product} />}
+        selectable
+        selectedItems={selectedItems}
+        onSelectionChange={setSelectedItems}
       />
     </>
   )
