@@ -1,8 +1,9 @@
-import { ResourceList, Banner, Heading } from "@shopify/polaris"
+import { useState, useEffect } from "react"
 import { useQuery } from "react-apollo"
 import { gql } from "apollo-boost"
+import { ResourceList, Banner, Heading } from "@shopify/polaris"
+import store from "store-js"
 import ProductListItem from "./ProductListItem"
-import { useState } from "react"
 
 const GET_PRODUCTS = gql`
   query getProducts {
@@ -39,6 +40,11 @@ const ProductList = () => {
   const { data, loading, error } = useQuery(GET_PRODUCTS)
   const [selectedItems, setSelectedItems] = useState([])
 
+  useEffect(() => {
+    const existingProducts = store.get("product_group") || []
+    setSelectedItems(existingProducts)
+  }, [])
+
   if (loading) {
     return <p>Loading products...</p>
   }
@@ -67,7 +73,19 @@ const ProductList = () => {
         renderItem={product => <ProductListItem product={product} />}
         selectable
         selectedItems={selectedItems}
-        onSelectionChange={setSelectedItems}
+        onSelectionChange={items => setSelectedItems(items.map(item => item.id))}
+        promotedBulkActions={[
+          {
+            content: "Add to group",
+            disabled: selectedItems.length === 0,
+            onAction: () => {
+              const existingIds = store.get("product_group") || []
+              const productIds = existingIds.concat(selectedItems)
+
+              store.set("product_group", productIds)
+            }
+          }
+        ]}
       />
     </>
   )
