@@ -1,4 +1,4 @@
-import { Modal, Form, TextContainer, TextField, FormLayout } from "@shopify/polaris"
+import { Modal, Form, TextContainer, TextField, FormLayout, Card, TextStyle } from "@shopify/polaris"
 import { useState } from "react"
 
 const EditPricesModal = ({ open, onClose, products }) => {
@@ -19,14 +19,19 @@ const EditPricesModal = ({ open, onClose, products }) => {
       ]}
     >
       <Modal.Section>
-        <TextContainer>
-          <p>Specify a fixed price to set the price of all selected products to</p>
-        </TextContainer>
-
         <Form>
           <FormLayout>
+            <TextContainer spacing="tight">
+              <p>
+                Specify a
+                <TextStyle variation="strong">
+                  &nbsp;fixed price&nbsp;
+                </TextStyle>
+                to be applied to all selected products
+              </p>
+            </TextContainer>
+
             <TextField
-              label="Fixed price"
               type="number"
               prefix="£"
               value={fixedPrice}
