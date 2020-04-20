@@ -75,6 +75,11 @@ const ProductList = () => {
             content: `Edit ${selectedProducts.length} prices`,
             disabled: selectedProducts.length === 0,
             onAction: () => setShowEditModal(true)
+          },
+          {
+            content: "Clear",
+            disabled: selectedProducts.length === 0,
+            onAction: () => setSelectedProducts([])
           }
         ]}
       />
