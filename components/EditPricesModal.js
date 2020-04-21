@@ -17,12 +17,6 @@ const UPDATE_PRODUCT = gql`
         field
         message
       }
-      product {
-        id
-      }
-      productVariant {
-        id
-      }
     }
   }
 `
@@ -32,13 +26,48 @@ const EditPricesModal = ({ open, onClose, products }) => {
   const [showError, setShowError] = useState(false)
   const [fixedPrice, setFixedPrice] = useState()
 
+  const [progress, setProgress] = useState({
+    show: false,
+    message: "",
+    cursor: 0
+  })
+
   const [ updateProduct, { loading, error } ] = useMutation(UPDATE_PRODUCT, {
     onCompleted() {
+      if (progress.cursor < products.length) {
+        updateNextProduct()
+
+        return
+      }
+
+      setProgress({
+        show: false,
+        message: "",
+        cursor: 0
+      })
+
       setShowSuccess(true)
       setTimeout(() => setShowSuccess(false), 2000)
     },
     onError: () => setShowError(true)
   })
+
+  const updateNextProduct = () => {
+    updateProduct({
+      variables: {
+        input: {
+          id: products[progress.cursor],
+          price: fixedPrice
+        }
+      }
+    })
+
+    setProgress({
+      show: true,
+      message: `Updating product ${progress.cursor + 1} of ${products.length}`,
+      cursor: progress.cursor + 1
+    })
+  }
 
   return (
     <Modal
@@ -47,18 +76,11 @@ const EditPricesModal = ({ open, onClose, products }) => {
       title="Bulk edit prices"
       primaryAction={{
         content: "Set prices",
-        disabled: fixedPrice === null || fixedPrice === undefined || loading,
-        onAction: () => updateProduct({
-          variables: {
-            input: {
-              id: products[0],
-              price: fixedPrice
-            }
-          }
-        })
+        disabled: fixedPrice === null || fixedPrice === undefined || loading || progress.show,
+        onAction: () => updateNextProduct()
       }}
       secondaryActions={[
-        { content: "Close", onAction: onClose, disabled: loading }
+        { content: "Close", onAction: onClose, disabled: loading || progress.show }
       ]}
     >
       <Modal.Section>
@@ -71,6 +93,12 @@ const EditPricesModal = ({ open, onClose, products }) => {
         {!!error && showError && (
           <Banner status="critical" onDismiss={() => setShowError(false)}>
             {error.message}
+          </Banner>
+        )}
+
+        {progress.show && (
+          <Banner status="info">
+            {progress.message}
           </Banner>
         )}
 
@@ -95,7 +123,7 @@ const EditPricesModal = ({ open, onClose, products }) => {
               value={fixedPrice}
               onChange={setFixedPrice}
               min={0}
-              disabled={loading}
+              disabled={loading || progress.show}
               autoFocus
             />
           </FormLayout>
