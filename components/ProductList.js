@@ -5,6 +5,11 @@ import { ResourceList, Banner, Heading } from "@shopify/polaris"
 import ProductListItem from "./ProductListItem"
 import EditPricesModal from "./EditPricesModal"
 
+const getFirstVariantIds = (products, selectedProductIds) =>
+  products.map(product => product.node)
+    .filter(product => selectedProductIds.includes(product.id))
+    .map(product => product.variants.edges[0].node.id)
+
 const GET_PRODUCTS = gql`
   query getProducts {
     products(first: 10) {
@@ -37,9 +42,10 @@ const GET_PRODUCTS = gql`
 `
 
 const ProductList = () => {
-  const { data, loading, error } = useQuery(GET_PRODUCTS)
   const [selectedProducts, setSelectedProducts] = useState([])
   const [showEditModal, setShowEditModal] = useState(false)
+
+  const { data, loading, error } = useQuery(GET_PRODUCTS)
 
   if (loading) {
     return <p>Loading products...</p>
@@ -87,7 +93,7 @@ const ProductList = () => {
       <EditPricesModal
         open={showEditModal}
         onClose={() => setShowEditModal(false)}
-        products={selectedProducts}
+        products={getFirstVariantIds(data.products.edges, selectedProducts)}
       />
     </>
   )
