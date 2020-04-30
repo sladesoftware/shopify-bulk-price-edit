@@ -1,7 +1,7 @@
 {
-  "name": "shopify-node-app",
+  "name": "sladesoftware-shopify-bulk-price-edit",
   "version": "1.0.0",
-  "description": "Shopify's node app for CLI tool",
+  "description": "Server component for the Shopify App that offers bulk product price editing",
   "scripts": {
     "test": "jest",
     "dev": "NODE_ENV=development nodemon ./server/index.js --watch ./server/index.js",
@@ -10,12 +10,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Shopify/shopify-node-app.git"
+    "url": "git+https://github.com/sladesoftware/shopify-bulk-price-edit.git"
   },
-  "author": "Shopify Inc.",
+  "author": "Slade Software Ltd",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/shopify/shopify-node-app/issues"
+    "url": "https://github.com/sladesoftware/shopify-bulk-price-edit/issues"
   },
   "dependencies": {
     "@babel/core": "7.9.0",
